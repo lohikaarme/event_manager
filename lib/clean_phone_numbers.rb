@@ -1,5 +1,15 @@
 require 'csv'
 
+def clean_phone_numbers(phone)
+  phone = phone.to_s.tr('^0-9', '')
+
+  phone[0] = '' if phone[0] == '1'
+
+  phone = nil if phone.length != 10
+
+  phone
+end
+
 puts 'Clean phone numbers initialized'
 
 contents = CSV.open(
@@ -9,22 +19,10 @@ contents = CSV.open(
 )
 
 contents.each do |row|
-  phone = row[:homephone]
-  
-  phone = phone.to_s.tr('^0-9','')
-  
-  if phone[0] == '1'
-    phone[0] = ''
-  end
-
-  if phone.length != 10
-    phone = nil
-  end
+  phone = clean_phone_numbers(row[:homephone])
 
   puts phone
-  
 end
-
 
 # If less than 10 digits, assume that it is a bad number
 # If 10 digits, assume that it is good
