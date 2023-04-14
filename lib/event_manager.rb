@@ -1,19 +1,20 @@
+# frozen_string_literal: true
+
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
-require 'pry'
 
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
-  
-  begin 
+
+  begin
     civic_info.representative_info_by_address(
       address: zip,
       levels: 'country',
-      roles: ['legislatorUpperBody', 'legislatorLowerBody']
+      roles: %w[legislatorUpperBody legislatorLowerBody]
     ).officials
-  rescue
+  rescue StandardError
     'You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials'
   end
 end
@@ -22,7 +23,7 @@ def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
 end
 
-def save_thank_you_letter(id,form_letter)
+def save_thank_you_letter(id, form_letter)
   Dir.mkdir('output') unless Dir.exist?('output')
   filename = "output/thanks_#{id}.html"
 
@@ -32,13 +33,12 @@ def save_thank_you_letter(id,form_letter)
 end
 
 def clean_phone(phone)
-
   num = phone.tr('^0-9', '')
   if num.length == 11 && num[0] == '1'
-    num[1..9]
+    num[1..10]
   elsif num.length != 10
     nil
-  else 
+  else
     num
   end
 end
@@ -60,7 +60,6 @@ contents.each do |row|
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
   form_letter = erb_template.result(binding)
-  save_thank_you_letter(id,form_letter)
+  save_thank_you_letter(id, form_letter)
+  puts phone
 end
-
-
