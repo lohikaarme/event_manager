@@ -5,7 +5,6 @@ require 'google/apis/civicinfo_v2'
 require 'erb'
 require 'date'
 
-
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
@@ -45,8 +44,8 @@ def clean_phone(phone)
   end
 end
 
-def time_target(time)
-  
+def largest_key(hash)
+  hash.max_by{|_,v| v}[0]
 end
 
 puts 'Event Manager Initialized!'
@@ -61,7 +60,6 @@ erb_template = ERB.new template_letter
 reg_time = Hash.new(0)
 reg_date = Hash.new(0)
 
-
 contents.each do |row|
   id = row[0]
   reg = Time.strptime(row[:regdate], '%m/%d/%y %k:%M')
@@ -75,5 +73,6 @@ contents.each do |row|
   # save_thank_you_letter(id, form_letter)
   # puts phone
 end
-puts reg_date
-puts reg_time
+
+puts "Most popular registration day: #{largest_key(reg_date)}"
+puts "Most popular registration hour: #{largest_key(reg_time)}"
