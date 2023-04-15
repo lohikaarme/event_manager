@@ -45,7 +45,7 @@ def clean_phone(phone)
 end
 
 def largest_key(hash)
-  hash.max_by{|_,v| v}[0]
+  hash.max_by { |_, v| v }[0]
 end
 
 puts 'Event Manager Initialized!'
@@ -65,13 +65,13 @@ contents.each do |row|
   reg = Time.strptime(row[:regdate], '%m/%d/%y %k:%M')
   reg_time[reg.hour] += 1
   reg_date[Date::DAYNAMES[reg.wday]] += 1
-  # name = row[:first_name]
-  # phone = clean_phone(row[:homephone])
-  # zipcode = clean_zipcode(row[:zipcode])
-  # legislators = legislators_by_zipcode(zipcode)
-  # form_letter = erb_template.result(binding)
-  # save_thank_you_letter(id, form_letter)
-  # puts phone
+  name = row[:first_name]
+  phone = clean_phone(row[:homephone])
+  zipcode = clean_zipcode(row[:zipcode])
+  legislators = legislators_by_zipcode(zipcode)
+  form_letter = erb_template.result(binding)
+  save_thank_you_letter(id, form_letter)
+  puts phone
 end
 
 puts "Most popular registration day: #{largest_key(reg_date)}"
